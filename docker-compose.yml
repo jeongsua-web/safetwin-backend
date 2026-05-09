@@ -4,41 +4,45 @@ services:
     container_name: safetwin-db
     environment:
       POSTGRES_DB: safetwin
-      POSTGRES_USER: ${DB_USERNAME:-safetwin}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-safetwin}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      # 초기 스키마 설정 (경로 주의: 서버 환경에 맞춰 상대 경로 확인)
       - ./src/main/resources/sql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-safetwin} -d safetwin"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d safetwin"]
       interval: 10s
       timeout: 5s
       retries: 5
     restart: unless-stopped
 
   app:
+    # build: . 대신 이미 빌드된 이미지를 사용하도록 CI/CD 흐름을 잡을 것입니다.
+    # 하지만 로컬 테스트를 위해 그대로 두셔도 무방합니다.
     build: .
     container_name: safetwin-app
     ports:
       - "8080:8080"
     environment:
-      DB_HOST: db
-      DB_USERNAME: ${DB_USERNAME:-safetwin}
-      DB_PASSWORD: ${DB_PASSWORD:-safetwin}
+      # Spring Boot에서 읽을 DB 주소 (컨테이너 서비스명 사용)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/safetwin
+      SPRING_DATASOURCE_USERNAME: ${DB_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
       JWT_SECRET: ${JWT_SECRET}
-      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY:-}
-      AWS_SECRET_KEY: ${AWS_SECRET_KEY:-}
-      AWS_S3_BUCKET: ${AWS_S3_BUCKET:-safetwin-bucket}
-      AWS_REGION: ${AWS_REGION:-ap-northeast-2}
+      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
+      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET}
+      AWS_REGION: ap-northeast-2
       GEMINI_API_KEY: ${GEMINI_API_KEY}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
-      NTS_API_KEY: ${NTS_API_KEY:-}
-      LAW_API_KEY: ${LAW_API_KEY:-}
-      MAIL_USERNAME: ${MAIL_USERNAME:-}
-      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      NTS_API_KEY: ${NTS_API_KEY}
+      LAW_API_KEY: ${LAW_API_KEY}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
       SPRING_PROFILES_ACTIVE: prod
     depends_on:
       db:
