@@ -1,0 +1,36 @@
+# --- Java & Gradle ---
+.gradle/
+build/
+out/
+bin/
+.history/
+stacktrace.log
+
+# --- IDE (IntelliJ, VS Code) ---
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# --- OS & Temporary files ---
+.DS_Store
+Thumbs.db
+*.swp
+*.log
+*.tmp
+*.bak
+
+# --- Spring Boot & Environment ---
+.env
+.env.local
+*.properties
+# 만약 application.yml을 보안상 숨기고 싶다면 아래 주석을 푸세요
+# application-secret.yml
+
+# --- Docker ---
+.docker/
