@@ -28,9 +28,8 @@ Thumbs.db
 # --- Spring Boot & Environment ---
 .env
 .env.local
-*.properties
-# 만약 application.yml을 보안상 숨기고 싶다면 아래 주석을 푸세요
-# application-secret.yml
+# *.properties 대신 보안이 필요한 특정 파일만 지정하는 것이 안전합니다.
+# 만약 비밀번호가 들어있는 파일이 있다면 직접 지정하세요 (예: application-secret.yml)
 
 # --- Docker ---
 .docker/
